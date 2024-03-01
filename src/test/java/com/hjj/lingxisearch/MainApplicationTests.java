@@ -1,6 +1,5 @@
 package com.hjj.lingxisearch;
 
-import com.hjj.lingxisearch.config.WxOpenConfig;
 import javax.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

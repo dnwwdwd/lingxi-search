@@ -7,6 +7,7 @@ import cn.hutool.json.JSONUtil;
 import com.hjj.lingxisearch.model.entity.Picture;
 import com.hjj.lingxisearch.model.entity.Post;
 import com.hjj.lingxisearch.service.PostService;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,14 +16,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
-import javax.json.JsonArray;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @SpringBootTest
+@Slf4j
 public class CrawlerTest {
+    @Resource
+    private PostService postService;
 
     @Test
     void testFetchPicture() throws IOException {
@@ -63,7 +66,8 @@ public class CrawlerTest {
         // 2. json转为对象
         Map<String, Object> map = JSONUtil.toBean(result, Map.class);
         JSONObject data = (JSONObject) map.get("data");
-        JsonArray records = (JsonArray) data.get("records");
+        Object o = data.get("records");
+        JSONArray records = (JSONArray) o;
         List<Post> postList = new ArrayList<>();
         for (Object record : records) {
             JSONObject tempRecord = (JSONObject) record;
@@ -76,6 +80,24 @@ public class CrawlerTest {
             post.setUserId(1L);
             postList.add(post);
         }
-        System.out.println(postList);
+        boolean b = postService.saveBatch(postList);
+        if (b) {
+            log.info("获取文章成功");
+        } else {
+            log.error("获取文章失败");
+        }
+    }
+
+    @Test
+    void testGetBilibiliTitle() throws IOException {
+        String url = "https://www.bilibili.com/video/BV1dx4y1r7ar/?spm_id_from=333.788.0.0&vd_source=54ce90171f33041b8da557323cf4b893";
+        Document doc = Jsoup.connect(url).get();
+        Elements elements = doc.select(".video-desc-container .basic-desc-info[data-v-1d530b8d]");
+        for (Element element : elements) {
+            System.out.println(element.select(".desc-info-text").get(0).text());
+        }
+
+        String s = "s a v";
+        s.toUpperCase();
     }
 }

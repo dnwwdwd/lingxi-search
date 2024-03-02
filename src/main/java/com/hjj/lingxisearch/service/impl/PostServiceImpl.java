@@ -3,6 +3,7 @@ package com.hjj.lingxisearch.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.hjj.lingxisearch.common.ResultUtils;
 import com.hjj.lingxisearch.constant.CommonConstant;
 import com.hjj.lingxisearch.exception.BusinessException;
 import com.hjj.lingxisearch.exception.ThrowUtils;
@@ -305,6 +306,15 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
         return postVOPage;
     }
 
+    @Override
+    public Page<PostVO> listPostVOPage(PostQueryRequest postQueryRequest, HttpServletRequest request) {
+        long current = postQueryRequest.getCurrent();
+        long size = postQueryRequest.getPageSize();
+        // 限制爬虫
+        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
+        Page<Post> postPage = this.page(new Page<>(current, size), this.getQueryWrapper(postQueryRequest));
+        return this.getPostVOPage(postPage, request);
+    }
 }
 
 

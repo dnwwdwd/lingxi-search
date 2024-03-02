@@ -2,11 +2,14 @@ package com.hjj.lingxisearch.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.hjj.lingxisearch.common.ResultUtils;
 import com.hjj.lingxisearch.constant.CommonConstant;
 import com.hjj.lingxisearch.constant.UserConstant;
 import com.hjj.lingxisearch.exception.BusinessException;
 import com.hjj.lingxisearch.common.ErrorCode;
+import com.hjj.lingxisearch.exception.ThrowUtils;
 import com.hjj.lingxisearch.mapper.UserMapper;
 import com.hjj.lingxisearch.model.dto.user.UserQueryRequest;
 import com.hjj.lingxisearch.model.entity.User;
@@ -267,5 +270,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
                 sortField);
         return queryWrapper;
+    }
+
+    @Override
+    public Page<UserVO> listUserVOByPage(UserQueryRequest userQueryRequest) {
+        long current = userQueryRequest.getCurrent();
+        long size = userQueryRequest.getPageSize();
+        // 限制爬虫
+        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
+        Page<User> userPage = this.page(new Page<>(current, size),
+                this.getQueryWrapper(userQueryRequest));
+        Page<UserVO> userVOPage = new Page<>(current, size, userPage.getTotal());
+        List<UserVO> userVO = this.getUserVO(userPage.getRecords());
+        userVOPage.setRecords(userVO);
+        return userVOPage;
     }
 }

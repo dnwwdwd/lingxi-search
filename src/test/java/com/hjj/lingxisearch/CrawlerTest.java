@@ -97,7 +97,5 @@ public class CrawlerTest {
             System.out.println(element.select(".desc-info-text").get(0).text());
         }
 
-        String s = "s a v";
-        s.toUpperCase();
     }
 }

@@ -2,6 +2,7 @@ package com.hjj.lingxisearch.datasource;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hjj.lingxisearch.model.dto.post.PostQueryRequest;
+import com.hjj.lingxisearch.model.entity.Post;
 import com.hjj.lingxisearch.model.vo.PostVO;
 import com.hjj.lingxisearch.service.PostService;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +32,8 @@ public class PostDataSource implements DataSource<PostVO> {
         postQueryRequest.setPageSize(pageSize);
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
-        Page<PostVO> postVOPage = postService.listPostVOPage(postQueryRequest, request);
-        return postVOPage;
+        Page<Post> postPage = postService.searchFromEs(postQueryRequest);
+        return postService.getPostVOPage(postPage, request);
     }
 }
 

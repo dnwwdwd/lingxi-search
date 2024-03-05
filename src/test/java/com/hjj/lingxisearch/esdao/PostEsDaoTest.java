@@ -54,8 +54,8 @@ public class PostEsDaoTest {
     @Test
     void testAdd() {
         PostEsDTO postEsDTO = new PostEsDTO();
-        postEsDTO.setId(1L);
-        postEsDTO.setTitle("鱼皮是狗");
+        postEsDTO.setId(2L);
+        postEsDTO.setTitle("鱼皮是小黑子");
         postEsDTO.setContent("鱼皮的知识星球：https://yupi.icu，直播带大家做项目");
         postEsDTO.setTags(Arrays.asList("java", "python"));
         postEsDTO.setUserId(1L);
@@ -72,6 +72,7 @@ public class PostEsDaoTest {
         System.out.println(postEsDTO);
     }
 
+
     @Test
     void testCount() {
         System.out.println(postEsDao.count());
@@ -81,5 +82,11 @@ public class PostEsDaoTest {
     void testFindByCategory() {
         List<PostEsDTO> postEsDaoTestList = postEsDao.findByUserId(1L);
         System.out.println(postEsDaoTestList);
+    }
+
+    @Test
+    void testFindByTitle() {
+        List<PostEsDTO> postEsDTOList = postEsDao.findByTitle("鱼皮");
+        System.out.println(postEsDTOList);
     }
 }
